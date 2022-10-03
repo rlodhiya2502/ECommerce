@@ -28,6 +28,9 @@ namespace ECommerce.Api.Search
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICustomersService, CustomersService>();
+            services.AddScoped<IProductsService,ProductsService>();
+            services.AddScoped<IOrdersService,OrdersService>(); 
+            services.AddScoped<ISearchService,SearchService>(); 
             services.AddHttpClient("CustomersService", config =>
             {
                 config.BaseAddress = new Uri(Configuration["Services:Customers"]);
