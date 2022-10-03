@@ -18,7 +18,20 @@ namespace ECommerce.Api.Products.Providers
             this.dbContext = dbContext;
             this.mapper = mapper;
             this.logger = logger;
+            SeedData();
         }
+        private void SeedData()
+        {
+            if (!dbContext.Products.Any())
+            {
+                dbContext.Products.Add(new Db.Product() { Id = 1, Name = "Keyboard", Price = 25, Inventory = 120 });
+                dbContext.Products.Add(new Db.Product() { Id = 2, Name = "Mouse", Price = 8, Inventory = 150 });
+                dbContext.Products.Add(new Db.Product() { Id = 3, Name = "Monitor", Price = 190, Inventory = 1000 });
+                dbContext.Products.Add(new Db.Product() { Id = 4, Name = "CPU", Price = 250, Inventory = 2000 });
+                dbContext.SaveChanges();
+            }
+        }
+
 
         public Task<(bool IsSuccess, Models.Product Product, string ErrorMessage)> GetProductAsync(int id)
         {
