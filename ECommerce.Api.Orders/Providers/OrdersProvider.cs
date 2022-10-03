@@ -2,6 +2,7 @@
 using ECommerce.Api.Orders.Db;
 using ECommerce.Api.Orders.Interfaces;
 using ECommerce.Api.Orders.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -76,14 +77,27 @@ namespace ECommerce.Api.Orders.Providers
                 dbContext.SaveChanges();
             }
         }
-        public Task<(bool IsSuccess, IEnumerable<Order> Orders, string ErrorMessage)> GetOrdersAsync(int customerId)
+        public async Task<(bool IsSuccess, IEnumerable<Models.Order> Orders, string ErrorMessage)> GetOrdersAsync(int customerId)
         {
-            throw new System.NotImplementedException();
-        }
-
-        Task<(bool IsSuccess, IEnumerable<Models.Order> Orders, string ErrorMessage)> IOrdersProvider.GetOrdersAsync(int customerId)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                var orders = await dbContext.Orders
+                    .Where(o => o.CustomerId == customerId)
+                    .Include(o => o.Items)
+                    .ToListAsync();
+                if (orders != null && orders.Any())
+                {
+                    var result = mapper.Map<IEnumerable<Db.Order>,
+                        IEnumerable<Models.Order>>(orders);
+                    return (true, result, null);
+                }
+                return (false, null, "Not Found");
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex.ToString());
+                return (false, null, ex.Message);
+            }
         }
     }
 }
