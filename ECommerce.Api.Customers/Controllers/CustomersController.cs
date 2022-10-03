@@ -1,6 +1,7 @@
 ﻿using ECommerce.Api.Customers.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ECommerce.Api.Customers.Controllers
 {
@@ -15,9 +16,26 @@ namespace ECommerce.Api.Customers.Controllers
             this.customersProvider = customersProvider;
         }
 
-        //TODO: GET CUSTOMERS 
+        [HttpGet]
+        public async Task<IActionResult> GetCustomersAsync()
+        {
+            var result = await customersProvider.GetCustomersAsync();
+            if (result.IsSuccess)
+            {
+                return Ok(result.Customers);
+            }
+            return NotFound();
+        }
 
-        //TODO: GET CUSTOMERS BY ID
-
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCustomerAsync(int id)
+        {
+            var result = await customersProvider.GetCustomerAsync(id);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Customer);
+            }
+            return NotFound();
+        }
     }
 }
