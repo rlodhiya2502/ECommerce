@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using ECommerce.Api.Products.Db;
 using ECommerce.Api.Products.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ECommerce.Api.Products.Providers
@@ -33,14 +36,46 @@ namespace ECommerce.Api.Products.Providers
         }
 
 
-        public Task<(bool IsSuccess, Models.Product Product, string ErrorMessage)> GetProductAsync(int id)
+        public async Task<(bool IsSuccess, Models.Product Product, string ErrorMessage)> GetProductAsync(int id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                logger?.LogInformation($"Querying products with id: {id}");
+                var product = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+                if (product != null)
+                {
+                    logger?.LogInformation("Product found");
+                    var result = mapper.Map<Models.Product>(product);
+                    return (true, result, null);
+                }
+                return (false, null, "Not found");
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex.ToString());
+                return (false, null, ex.Message);
+            }
         }
 
-        public Task<(bool IsSuccess, IEnumerable<Models.Product> Products, string ErrorMessage)> GetProductsAsync()
+        public async Task<(bool IsSuccess, IEnumerable<Models.Product> Products, string ErrorMessage)> GetProductsAsync()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                logger?.LogInformation("Querying products");
+                var products = await dbContext.Products.ToListAsync();
+                if (products != null && products.Any())
+                {
+                    logger?.LogInformation($"{products.Count} product(s) found");
+                    var result = mapper.Map<IEnumerable<Models.Product>>(products);
+                    return (true, result, null);
+                }
+                return (false, null, "Not found");
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex.ToString());
+                return (false, null, ex.Message);
+            }
         }
     }
 }
