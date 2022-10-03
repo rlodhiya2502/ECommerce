@@ -38,7 +38,7 @@ namespace ECommerce.Api.Customers.Tests
         public async Task GetCustomerReturnsCustomerUsingValidId()
         {
             var options = new DbContextOptionsBuilder<CustomersDbContext>()
-               .UseInMemoryDatabase(nameof(GetCustomersReturnAllCustomers))
+               .UseInMemoryDatabase(nameof(GetCustomerReturnsCustomerUsingValidId))
                .Options;
             var dbContext = new CustomersDbContext(options);
             CreateCustomers(dbContext);
@@ -61,7 +61,7 @@ namespace ECommerce.Api.Customers.Tests
         public async Task GetCustomerReturnsErrorUsingInvalidId()
         {
             var options = new DbContextOptionsBuilder<CustomersDbContext>()
-               .UseInMemoryDatabase(nameof(GetCustomersReturnAllCustomers))
+               .UseInMemoryDatabase(nameof(GetCustomerReturnsErrorUsingInvalidId))
                .Options;
             var dbContext = new CustomersDbContext(options);
             CreateCustomers(dbContext);
